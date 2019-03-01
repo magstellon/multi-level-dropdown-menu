@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <Dropdown :items="items" />
+    <Dropdown :items="items">
+        <button slot="activator">Dropdown</button>
+    </Dropdown>
   </div>
 </template>
 
