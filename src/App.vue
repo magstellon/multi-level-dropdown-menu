@@ -1,78 +1,95 @@
 <template>
   <div id="app">
     <Dropdown :items="items">
-        <button slot="activator">Dropdown</button>
+      <button slot="activator">
+        Dropdown
+      </button>
     </Dropdown>
   </div>
 </template>
 
 <script>
-import Dropdown from './components/Dropdown.vue'
+import Dropdown from './components/Dropdown.vue';
 
 const nop = () => {};
 
 export default {
-  name: 'app',
+  name: 'App',
   components: {
-    Dropdown
+    Dropdown,
   },
   data() {
     return {
       items: [
-        { 'text': 'Mon Compte', 
-          'action': () => alert('You have an trusted account'),
+        {
+          text: 'Mon Compte',
+          action: () => alert('You have an trusted account'),
         },
-        { 'text': 'Langue', 
-          'items': [ 
-            { 'text': 'Français',
-              'items': [
-                { 'text': 'Canadien' ,
-                  'action': nop,
+        {
+          text: 'Langue',
+          items: [
+            {
+              text: 'Français',
+              items: [
+                {
+                  text: 'Canadien',
+                  action: nop,
                 },
-                { 'text': 'Belge',
-                  'items': [
-                    { 'text': 'Nord', 
-                      'action': nop,
+                {
+                  text: 'Belge',
+                  items: [
+                    {
+                      text: 'Nord',
+                      action: nop,
                     },
-                    { 'text': 'Sud',
-                      'action': () => alert('Belge une fois !')
+                    {
+                      text: 'Sud',
+                      action: () => alert('Belge une fois !')
                     },
-                  ]
+                  ],
                 },
-              ]
-            }, 
-            { 'text': 'Anglais',
-              'action': nop,
-            }, 
-            { 'text': 'Espagnol',
-              'items': [
-                { 'text': 'Catalan',
-                  'action': nop,
-                },
-                { 'text': 'Argentine',
-                  'action': nop,
-                },
-              ]
+              ],
             },
-          ]
-        },
-        { 'text': 'A propos', 
-          'items': [ 
-            { 'text': 'Contact',
-              'action': nop,
-            }, 
-            { 'text': 'Qui sommes nous ?',
-              'action': nop,
-            }, 
-            { 'text': 'Lorem ipsum dolor sit amet',
-              'action': nop,
+            {
+              text: 'Anglais',
+              action: nop,
             },
-          ]
+            {
+              text: 'Espagnol',
+              items: [
+                {
+                  text: 'Catalan',
+                  action: nop,
+                },
+                {
+                  text: 'Argentine',
+                  action: nop,
+                },
+              ],
+            },
+          ],
         },
-      ]
+        {
+          text: 'A propos',
+          items: [
+            {
+              text: 'Contact',
+              action: nop,
+            },
+            {
+              text: 'Qui sommes nous ?',
+              action: nop,
+            },
+            {
+              text: 'Lorem ipsum dolor sit amet',
+              action: nop,
+            },
+          ],
+        },
+      ],
     };
-  }
-}
+  },
+};
 </script>
 
 <style>

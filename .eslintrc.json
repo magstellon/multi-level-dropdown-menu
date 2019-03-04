@@ -1,8 +1,7 @@
 {
     "env": {
         "browser": true,
-        "es6": true,
-        "node": true
+        "es6": true
     },
      "parserOptions": {
          "parser": "babel-eslint"
@@ -11,5 +10,7 @@
         "airbnb-base",
         "plugin:vue/recommended"
     ],
-    "rules": {}
+    "rules": {
+        "vue/html-no-self-closing": "off"
+    }
 }
