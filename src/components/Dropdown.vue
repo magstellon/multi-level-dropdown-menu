@@ -34,17 +34,22 @@
         >
           <li
             slot="children-activator"
-            class="item"
+            class="item node"
             @click="item.action && item.action()"
           >
-            <p>{{ item.text }} &rsaquo;</p>
+            <p>
+              {{ item.text }}
+            </p>
+            <span class="rsaquo">
+              &rsaquo;
+            </span>
           </li>
         </Dropdown>
 
         <li
           v-else
           :key="item.text"
-          class="item"
+          class="item leaf"
           @click="item.action && item.action()"
         >
           <p>{{ item.text }}</p>
@@ -148,9 +153,10 @@ export default {
     }
 
     .item {
-        padding: 0 10px;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
         cursor: pointer;
-        padding: 4px 14px;
         transition: all 0.4s ease;
         border-bottom: 1px solid #e2e4e3;
 
@@ -163,12 +169,27 @@ export default {
         &:hover {
           background-color: #f8f9fa;
         }
+
+        * {
+          text-align: left;
+        }
+
+        &.node {
+          padding: 8px 0 8px 16px;
+
+          .rsaquo {
+            margin-right: 16px;
+            margin-left: 8px;
+          }
+        }
+
+        &.leaf {
+          padding: 8px 16px 8px 16px;
+        }
     }
 
     &.active {
         display: inherit;
     }
-
-
 }
 </style>

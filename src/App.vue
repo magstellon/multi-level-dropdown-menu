@@ -32,11 +32,11 @@ export default {
               text: 'Français',
               items: [
                 {
-                  text: 'Canadien',
+                  text: 'Belge',
                   action: nop,
                 },
                 {
-                  text: 'Belge',
+                  text: 'Canadien',
                   items: [
                     {
                       text: 'Nord',
