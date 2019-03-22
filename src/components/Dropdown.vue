@@ -1,11 +1,11 @@
 <template>
-  <span @mouseleave="leave">
+  <span @mouseleave="active && leave()">
 
     <span
       v-if="activator"
       ref="activator"
       class="activator"
-      @click="click"
+      @click="!active && click()"
     >
       <slot name="activator"></slot>
     </span>
@@ -14,7 +14,7 @@
       v-if="childrenActivator"
       ref="activator"
       class="activator"
-      @mouseover="over"
+      @mouseover="!active && over()"
     >
       <slot name="children-activator"></slot>
     </span>
@@ -22,6 +22,7 @@
     <ul
       ref="items"
       class="items"
+      :class="{ active : active}"
     >
       <template
         v-for="item in items"
@@ -98,47 +99,28 @@ export default {
   methods: {
     click() {
       const { items, activator } = this.$refs;
+      this.active = true;
 
-      items.classList.add('active');
-      items.style.top = `${activator.getBoundingClientRect().top + activator.getBoundingClientRect().height}px`;
-      items.style.left = `${activator.getBoundingClientRect().left}px`;
+      this.$nextTick(() => {
+        items.style.top = `${activator.getBoundingClientRect().top + activator.getBoundingClientRect().height}px`;
+        items.style.left = `${activator.getBoundingClientRect().left}px`;
+      });
     },
     over() {
-      if (this.active) return;
-
       const { items, activator } = this.$refs;
-      items.classList.add('active');
-
-      items.style.top = `${activator.getBoundingClientRect().top - items.getBoundingClientRect().top - 1}px`;
-      items.style.left = `${activator.getBoundingClientRect().width + 1}px`;
-
       this.active = true;
+
+      this.$nextTick(() => {
+        items.style.top = `${activator.getBoundingClientRect().top - items.getBoundingClientRect().top - 1}px`;
+        items.style.left = `${activator.getBoundingClientRect().width + 1}px`;
+      });
     },
     leave() {
       const { items } = this.$refs;
-
-      items.classList.remove('active');
+      this.active = false;
 
       items.style.top = 0;
       items.style.left = 0;
-
-      this.active = false;
-    },
-    rootPosition() {
-      const { activator } = this.$refs;
-
-      return {
-        top: `${activator.getBoundingClientRect().top + activator.getBoundingClientRect().height}px`,
-        left: `${activator.getBoundingClientRect().left}px`,
-      };
-    },
-    childrenPosition() {
-      const { items, activator } = this.$refs;
-
-      return {
-        top: `${activator.getBoundingClientRect().top - items.getBoundingClientRect().top - 1}px`,
-        left: `${activator.getBoundingClientRect().width + 1}px`,
-      };
     },
   },
 };
