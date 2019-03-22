@@ -1,78 +1,129 @@
 <template>
-    <ul class="items">
-        <li class="item" 
-            v-for="item in items" 
-            :key="item.text"
+  <span @mouseleave="active && leave()">
 
-            @mouseover="over"
-            @mouseleave="leave"
+    <span
+      v-if="activator"
+      ref="activator"
+      class="activator"
+      @click="!active && click()"
+    >
+      <slot name="activator"></slot>
+    </span>
 
-            @click="item.action && item.action()"
+    <span
+      v-if="childrenActivator"
+      ref="activator"
+      class="activator"
+      @mouseover="!active && over()"
+    >
+      <slot name="children-activator"></slot>
+    </span>
+
+    <ul
+      ref="items"
+      class="items"
+      :class="{ active : active}"
+    >
+      <template
+        v-for="item in items"
+      >
+        <Dropdown
+          v-if="item.items"
+          :key="item.text"
+          :items="item.items"
         >
-            <template v-if="item.items">
-                <p>{{item.text}} &rsaquo;</p>
-                <Dropdown :items="item.items" />
-            </template>
-            <p v-else>{{item.text}}</p>
+          <li
+            slot="children-activator"
+            class="item"
+            @click="item.action && item.action()"
+          >
+            <p>{{ item.text }} &rsaquo;</p>
+          </li>
+        </Dropdown>
+
+        <li
+          v-else
+          :key="item.text"
+          class="item"
+          @click="item.action && item.action()"
+        >
+          <p>{{ item.text }}</p>
         </li>
+      </template>
     </ul>
+
+  </span>
 </template>
 
 <script>
 
-function getItem(element){
-    return element.tagName === 'LI' ? element : element.parentElement;
-}
+function validate(items, isValid = true) {
+  let valid = isValid;
 
-function validate(items, valid = true){
+  items.forEach((item) => {
+    // Text must be define
+    if (!item.text) valid = false;
+    // Either action or items
+    if (typeof item.action !== 'undefined' && item.items) valid = false;
+    // Action or items must be define
+    if (typeof item.action === 'undefined' && !item.items) valid = false;
 
-    items.forEach(item => {
-        // Text must be define
-        if (!item.text) valid = false;
-        // Either action or items
-        if(typeof item.action !== 'undefined' && item.items) valid = false;
-        // Action or items must be define
-        if (typeof item.action === 'undefined' && !item.items) valid = false;
-        
-        if(item.items) valid = validate(item.items, valid);
-    });
+    if (item.items) valid = validate(item.items, valid);
+  });
 
-    return valid;
+  return valid;
 }
 
 export default {
-    name: 'Dropdown',
-    props: {
-        items: {
-            type: Array,
-            required: true,
-            validator: validate,
-        }
+  name: 'Dropdown',
+  props: {
+    items: {
+      type: Array,
+      required: true,
+      validator: validate,
     },
-    methods: {
-        over(e){
-            const item = getItem(e.target),
-                children = item.querySelector('.items'),
-                items = item.parentElement;
+  },
+  data() {
+    return {
+      active: false,
+    };
+  },
+  computed: {
+    activator() {
+      return !!this.$slots.activator;
+    },
+    childrenActivator() {
+      return !!this.$slots['children-activator'];
+    },
+  },
+  methods: {
+    click() {
+      const { items, activator } = this.$refs;
+      this.active = true;
 
-            // Activate the item hovered & Show children if any
-            item.classList.add('active');
+      this.$nextTick(() => {
+        items.style.top = `${activator.getBoundingClientRect().top + activator.getBoundingClientRect().height}px`;
+        items.style.left = `${activator.getBoundingClientRect().left}px`;
+      });
+    },
+    over() {
+      const { items, activator } = this.$refs;
+      this.active = true;
 
-            // Position children
-            if(children) {
-                // Position is relative to items & border
-                children.style.top = item.getBoundingClientRect().top - items.getBoundingClientRect().top - 2 + 'px';
-                children.style.left = items.getBoundingClientRect().width + 'px';
-            }
-        },
-        leave(e) {
-            const item = getItem(e.target);
-            
-            // Hide the item hovered & children if any
-            item.classList.remove('active')
-        }
-    }
-}
+      this.$nextTick(() => {
+        items.style.top = `${activator.getBoundingClientRect().top - items.getBoundingClientRect().top - 1}px`;
+        items.style.left = `${activator.getBoundingClientRect().width + 1}px`;
+      });
+    },
+    leave() {
+      const { items } = this.$refs;
+      this.active = false;
+
+      items.style.top = 0;
+      items.style.left = 0;
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -82,12 +133,15 @@ export default {
 
     background-color: #fff;
     border: 1px solid rgba(0,0,0,.15);
+    border-bottom: 0px;
     color: #212529;
     position: absolute;
     top: 0;
     left: 0;
     padding: 0;
     margin: 0;
+    display:none;
+    white-space:nowrap;
 
     .items, .item {
         list-style: none;
@@ -96,27 +150,25 @@ export default {
     .item {
         padding: 0 10px;
         cursor: pointer;
-        border-bottom: 1px solid #e2e4e3;
         padding: 4px 14px;
         transition: all 0.4s ease;
-
-        &:last-child {
-            border-bottom: none;
-        }
+        border-bottom: 1px solid #e2e4e3;
 
         &.active {
-            background-color: #f8f9fa;
-            
             > .items {
                 display: inherit;
             }
         }
+
+        &:hover {
+          background-color: #f8f9fa;
+        }
     }
 
-    .items {
-        display:none;
-        white-space:nowrap;
+    &.active {
+        display: inherit;
     }
+
 
 }
 </style>
