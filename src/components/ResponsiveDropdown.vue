@@ -2,36 +2,28 @@
   <span>
 
     <span
-      v-if="activator"
       ref="activator"
-      class="activator"
-      @click="!active && show()"
+      class="activator enter"
+      @[action]="toggle"
     >
       <slot name="activator" />
     </span>
 
-    <span
-      v-if="childrenActivator"
-      ref="activator"
-      class="activator enter"
-      @click="!active && enter()"
-    >
-      <slot name="children-activator" />
-    </span>
 
     <ul
       ref="items"
       class="items"
+      :style="style"
       :class="{ active : active, hidden: hidden }"
     >
 
       <span
-        v-if="childrenActivator"
+        v-if="!rootActivator"
         ref="activator"
         class="activator leave"
-        @click="active && leave()"
+        @[action]="active && leave()"
       >
-        <slot name="children-activator" />
+        <slot name="activator" />
       </span>
 
       <template
@@ -41,11 +33,12 @@
           v-if="item.items"
           :key="item.text"
           :items="item.items"
+          action="click"
           @enter="hide"
           @leave="hide"
         >
           <li
-            slot="children-activator"
+            slot="activator"
             class="item node"
             @click="item.action && item.action()"
           >
@@ -101,31 +94,39 @@ export default {
       required: true,
       validator: validate,
     },
+    action: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
       active: false,
       hidden: false,
+      style: {
+        top: 0,
+      },
     };
   },
   computed: {
-    activator() {
-      return !!this.$slots.activator;
-    },
-    childrenActivator() {
-      return !!this.$slots['children-activator'];
+    rootActivator() {
+      return this.$parent.$options.name !== this.$options.name;
     },
   },
   methods: {
-    show() {
-      const { items, activator } = this.$refs;
-      this.active = true;
-
-      this.$nextTick(() => {
-        items.style.top = `${activator.getBoundingClientRect().top + activator.getBoundingClientRect().height}px`;
-      });
+    toggle() {
+      if (this.active) {
+        this.leave();
+      } else {
+        this.enter();
+      }
     },
     enter() {
+      if (this.rootActivator) {
+        const { activator } = this.$refs;
+        this.style.top = `${activator.getBoundingClientRect().top + activator.getBoundingClientRect().height}px`;
+      }
+
       this.$emit('enter', true);
       this.active = true;
     },

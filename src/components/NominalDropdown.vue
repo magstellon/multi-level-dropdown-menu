@@ -2,27 +2,18 @@
   <span @mouseleave="active && leave()">
 
     <span
-      v-if="activator"
       ref="activator"
       class="activator"
-      @click="!active && click()"
+      @[action]="!active && enter()"
     >
       <slot name="activator" />
-    </span>
-
-    <span
-      v-if="childrenActivator"
-      ref="activator"
-      class="activator"
-      @mouseover="!active && enter()"
-    >
-      <slot name="children-activator" />
     </span>
 
     <ul
       ref="items"
       class="items"
-      :class="{ active : active}"
+      :style="style"
+      :class="{ active : active }"
     >
       <template
         v-for="item in items"
@@ -31,9 +22,10 @@
           v-if="item.items"
           :key="item.text"
           :items="item.items"
+          action="mouseover"
         >
           <li
-            slot="children-activator"
+            slot="activator"
             class="item node"
             @click="item.action && item.action()"
           >
@@ -87,46 +79,46 @@ export default {
       required: true,
       validator: validate,
     },
+    action: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
       active: false,
       responsive: false,
+      style: {
+        top: 0,
+        left: 0,
+      },
     };
   },
   computed: {
-    activator() {
-      return !!this.$slots.activator;
-    },
-    childrenActivator() {
-      return !!this.$slots['children-activator'];
+    rootActivator() {
+      return this.$parent.$options.name !== this.$options.name;
     },
   },
   methods: {
-    click() {
-      const { items, activator } = this.$refs;
-      this.active = true;
-
-      this.$nextTick(() => {
-        items.style.top = `${activator.getBoundingClientRect().top + activator.getBoundingClientRect().height}px`;
-        items.style.left = `${activator.getBoundingClientRect().left}px`;
-      });
-    },
     enter() {
       const { items, activator } = this.$refs;
       this.active = true;
 
       this.$nextTick(() => {
-        items.style.top = `${activator.getBoundingClientRect().top - items.getBoundingClientRect().top - 1}px`;
-        items.style.left = `${activator.getBoundingClientRect().width + 1}px`;
+        if (!this.rootActivator) {
+          this.style.top = `${activator.getBoundingClientRect().top - items.getBoundingClientRect().top - 1}px`;
+          this.style.left = `${activator.getBoundingClientRect().width + 1}px`;
+        } else {
+          this.style.top = `${activator.getBoundingClientRect().top + activator.getBoundingClientRect().height}px`;
+          this.style.left = `${activator.getBoundingClientRect().left}px`;
+        }
       });
     },
     leave() {
-      const { items } = this.$refs;
       this.active = false;
 
-      items.style.top = 0;
-      items.style.left = 0;
+      this.style.top = 0;
+      this.style.left = 0;
     },
   },
 };

@@ -2,6 +2,7 @@
   <ResponsiveDropdown
     v-if="responsive"
     :items="items"
+    action="click"
   >
     <slot
       slot="activator"
@@ -11,6 +12,7 @@
   <NominalDropdown
     v-else
     :items="items"
+    action="click"
   >
     <slot
       slot="activator"
