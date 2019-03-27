@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <Dropdown :items="items">
+    <Dropdown
+      action="click"
+      :items="items"
+    >
       <button slot="activator">
         Dropdown
       </button>
