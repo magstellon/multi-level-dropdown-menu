@@ -1,29 +1,28 @@
 # vue-multi-level-dropdown
 
+:page_with_curl: A multi level dropdown menu component based on VueJS 2.0
+
+Features:
+
+* N multi level dropdown menu
+* Action hook on dropdown item
+* Responsive support
+
 ## Project setup
 ```
-npm install
+yarn install
 ```
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+yarn serve
 ```
 
 ### Compiles and minifies for production
 ```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
+yarn build
 ```
 
 ### Lints and fixes files
 ```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+yarn lint

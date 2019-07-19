@@ -1,7 +1,10 @@
 <template>
   <div id="app">
     <Dropdown :items="items">
-      <button slot="activator">
+      <button
+        slot="activator"
+        class="outline purple-white"
+      >
         Dropdown
       </button>
     </Dropdown>
@@ -23,6 +26,7 @@ export default {
       items: [
         {
           text: 'Mon Compte',
+          // eslint-disable-next-line
           action: () => alert('You have an trusted account'),
         },
         {
@@ -33,7 +37,8 @@ export default {
               items: [
                 {
                   text: 'Belge',
-                  action: nop,
+                  // eslint-disable-next-line
+                  action: () => alert('Belge une fois !'),
                 },
                 {
                   text: 'Canadien',
@@ -44,7 +49,7 @@ export default {
                     },
                     {
                       text: 'Sud',
-                      action: () => alert('Belge une fois !')
+                      action: nop,
                     },
                   ],
                 },
@@ -92,7 +97,11 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
+body {
+  background-color: #ECF1EF;
+}
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
